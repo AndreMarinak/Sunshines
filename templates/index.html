@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunshines App</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fffbea; /* Light Yellow */
+            color: #333; /* Dark Gray */
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            color: #d4a373; /* Earthy Yellow */
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #f0e68c; /* Khaki */
+            border: none;
+            color: #555; /* Darker Gray */
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover {
+            background-color: #e0d87a; /* Slightly Darker Khaki */
+            transform: scale(1.05);
+        }
+        input[type="text"] {
+            width: 80%;
+            max-width: 300px;
+            padding: 10px;
+            margin: 15px 0;
+            border: 2px solid #f0e68c; /* Khaki */
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        #errorMessage {
+            color: red;
+            margin-top: 20px;
+            font-size: 1em;
+        }
+        #sunshinesName {
+            font-style: italic;
+            color: #d4a373; /* Earthy Yellow */
+            margin-top: 30px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Sunshines.app</h1>
+    <button onclick="createRoom()">Create Room</button>
+    <input type="text" id="roomCodeInput" placeholder="Enter Room Code">
+    <button onclick="joinRoom()">Join Room</button>
+    <div id="errorMessage"></div>
+
+    <div id="sunshinesName">A Project by Sunshines</div>
+
+    <script>
+        async function createRoom() {
+            let response = await fetch('/create-room', { method: 'POST' });
+            let data = await response.json();
+            window.location.href = '/room/' + encodeURIComponent(data.room_code) + '/review?token=' + encodeURIComponent(data.token);
+        }
+
+        async function joinRoom() {
+            let roomCode = document.getElementById("roomCodeInput").value;
+            let response = await fetch('/join-room', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ room_code: roomCode })
+            });
+            let data = await response.json();
+            if (data.status === "success") {
+                window.location.href = '/room/' + encodeURIComponent(roomCode) + '/submit';
+            } else {
+                document.getElementById("errorMessage").innerText = "Room not found. Please check the room code and try again.";
+            }
+        }
+    </script>
+</body>
+</html>

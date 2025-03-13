@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fffbea; /* Light Yellow */
+            color: #333; /* Dark Gray */
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: red;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Error</h1>
+    <p>An error occurred. You will be redirected to the home page in 2 seconds.</p>
+
+    <script>
+        setTimeout(function() {
+            window.location.href = "/";
+        }, 2000);
+    </script>
+</body>
+</html>

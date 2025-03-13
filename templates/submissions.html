@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Message</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffe0; /* Light Yellow */
+            color: #333; /* Dark Gray */
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            color: #d4a373; /* Earthy Yellow */
+            font-size: 2em;
+        }
+        #messageBox {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 2px solid #f0e68c; /* Khaki */
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #f0e68c; /* Khaki */
+            border: none;
+            color: #555; /* Darker Gray */
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #e0d87a; /* Slightly Darker Khaki */
+        }
+        #sunshinesName {
+            font-style: italic;
+            color: #d4a373; /* Earthy Yellow */
+            margin-top: 30px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Submit Your Message</h1>
+    <div id="messageBox">
+        <textarea id="messageInput" placeholder="Type your message..." oninput="adjustFontSize()"></textarea>
+        <button onclick="sendMessage()">Submit</button>
+    </div>
+
+    <div id="sunshinesName">A Project by Sunshines</div>
+
+    <script>
+        const roomCode = "{{ room_code }}";
+
+        async function sendMessage() {
+            let message = document.getElementById("messageInput").value;
+            let response = await fetch('/send-message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ room_code: roomCode, message: message })
+            });
+            let data = await response.json();
+            if (data.status === "success") {
+                document.getElementById("messageInput").value = "";
+            } else if (data.status === "closed") {
+                window.location.href = '/';
+            } else {
+                alert(data.message);
+            }
+        }
+
+        function adjustFontSize() {
+            const textarea = document.getElementById("messageInput");
+            const length = textarea.value.length;
+            let fontSize = 16; // Default font size
+
+            if (length > 100) {
+                fontSize = 14;
+            }
+            if (length > 200) {
+                fontSize = 12;
+            }
+            if (length > 300) {
+                fontSize = 10;
+            }
+            if (length > 400) {
+                fontSize = 8;
+            }
+
+            textarea.style.fontSize = fontSize + "px";
+        }
+    </script>
+</body>
+</html>

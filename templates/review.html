@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Submissions</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffe0; /* Light Yellow */
+            color: #333; /* Dark Gray */
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #d4a373; /* Earthy Yellow */
+        }
+        #roomCodeDisplay {
+            font-size: 2em;
+            color: #d4a373; /* Earthy Yellow */
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #f0e68c; /* Khaki */
+            border: none;
+            color: #555; /* Darker Gray */
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #e0d87a; /* Slightly Darker Khaki */
+        }
+        #reviewMessages {
+            margin: 20px 0;
+            font-size: 6.67em; /* 1.5 times smaller than 10em */
+            border: 2px solid #d4a373; /* Earthy Yellow */
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff8dc; /* Cornsilk */
+            max-height: 300px; /* Set a maximum height */
+            overflow-y: auto; /* Enable vertical scrolling */
+            word-wrap: break-word; /* Ensure long words break to fit within the box */
+        }
+        #messageCounter {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        #sunshinesName {
+            font-style: italic;
+            color: #d4a373; /* Earthy Yellow */
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Review Submissions</h1>
+    <div id="roomCodeDisplay">Room Code: {{ room_code }}</div>
+    <button onclick="closeSubmissions()">Close Submissions</button>
+    <div id="messageCounter"></div>
+    <div id="reviewMessages"></div>
+    <button onclick="prevMessage()">Previous</button>
+    <button onclick="nextMessage()">Next</button>
+
+    <div id="sunshinesName">A Project by Sunshines</div>
+
+    <script>
+        let currentRoomCode = "{{ room_code }}";
+        let currentMessageIndex = 0;
+        let messages = [];
+
+        async function fetchMessages() {
+            let response = await fetch('/get-messages/' + currentRoomCode);
+            let data = await response.json();
+            messages = data.messages;
+            showReviewMessage();
+        }
+
+        async function closeSubmissions() {
+            let response = await fetch('/close-submissions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ room_code: currentRoomCode })
+            });
+            let data = await response.json();
+            if (data.status === "success") {
+                fetchMessages();
+            } else {
+                alert(data.message);
+            }
+        }
+
+        function showReviewMessage() {
+            let reviewMessagesDiv = document.getElementById("reviewMessages");
+            let messageCounterDiv = document.getElementById("messageCounter");
+            reviewMessagesDiv.innerHTML = "";
+            if (messages.length > 0) {
+                let p = document.createElement("p");
+                p.textContent = messages[currentMessageIndex];
+                reviewMessagesDiv.appendChild(p);
+                messageCounterDiv.textContent = `Message ${currentMessageIndex + 1} of ${messages.length}`;
+            } else {
+                reviewMessagesDiv.textContent = "No messages to review.";
+                messageCounterDiv.textContent = "";
+            }
+        }
+
+        function prevMessage() {
+            if (currentMessageIndex > 0) {
+                currentMessageIndex--;
+                showReviewMessage();
+            }
+        }
+
+        function nextMessage() {
+            if (currentMessageIndex < messages.length - 1) {
+                currentMessageIndex++;
+                showReviewMessage();
+            }
+        }
+
+        window.addEventListener('beforeunload', async (event) => {
+            await fetch('/delete-room/' + currentRoomCode, { method: 'DELETE' });
+        });
+
+        fetchMessages();
+    </script>
+</body>
+</html>
