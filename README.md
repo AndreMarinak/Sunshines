@@ -4,7 +4,7 @@
 Sunshines is an inspiration from THON at Penn State where users could submit anonyomous messages to be reviewed/revealed to everyone at the end of a meeting. I first saw this created by Matthew-Holowsko, who made https://sunshines.app. However, this version here has a branch to allow users to submit pictures. This project was made in just under 6 hours with the help of Cursor. 
 
 
-Note: The main branch works with messages ONLY. "Pick Messages-AND-Pictures"
+Note: The main branch works with messages ONLY. Pick "Messages-AND-Pictures" for both.
 
 
 ## 🌟 Features
