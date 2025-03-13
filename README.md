@@ -1,3 +1,5 @@
+⚠️Note: The main branch works with messages ONLY. Pick "Messages-AND-Pictures" for both. ⚠️
+
 # Sunshines App
 
 
