@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fffbea; /* Light Yellow */
+            background-color: #fffacd; /* Brighter Light Yellow */
             color: #333; /* Dark Gray */
             text-align: center;
             padding: 50px;
@@ -21,11 +21,25 @@
         p {
             font-size: 1.2em;
         }
+        #sunshinesName {
+            font-style: italic;
+            color: #ffcc00; /* Brighter Yellow */
+            margin-top: 30px;
+            font-size: 1em;
+        }
+        #sunImage {
+            width: 100px;
+            height: auto;
+            margin-top: 20px;
+            background: none; /* Remove checkered background */
+        }
     </style>
 </head>
 <body>
     <h1>Error</h1>
     <p>An error occurred. You will be redirected to the home page in 2 seconds.</p>
+    <img id="sunImage" src="{{ url_for('static', filename='sun.png') }}" alt="Sun Image">
+    <div id="sunshinesName">A Project by A</div>
 
     <script>
         setTimeout(function() {

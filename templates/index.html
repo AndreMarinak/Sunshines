@@ -8,19 +8,19 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fffbea; /* Light Yellow */
+            background-color: #fffacd; /* Brighter Light Yellow */
             color: #333; /* Dark Gray */
             text-align: center;
             padding: 20px;
             margin: 0;
         }
         h1 {
-            color: #d4a373; /* Earthy Yellow */
+            color: #ffcc00; /* Brighter Yellow */
             font-size: 2em;
             margin-bottom: 20px;
         }
         button {
-            background-color: #f0e68c; /* Khaki */
+            background-color: #ffeb3b; /* Brighter Khaki */
             border: none;
             color: #555; /* Darker Gray */
             padding: 10px 20px;
@@ -34,7 +34,7 @@
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
         button:hover {
-            background-color: #e0d87a; /* Slightly Darker Khaki */
+            background-color: #ffd700; /* Slightly Darker Brighter Khaki */
             transform: scale(1.05);
         }
         input[type="text"] {
@@ -42,7 +42,7 @@
             max-width: 300px;
             padding: 10px;
             margin: 15px 0;
-            border: 2px solid #f0e68c; /* Khaki */
+            border: 2px solid #ffeb3b; /* Brighter Khaki */
             border-radius: 10px;
             font-size: 16px;
         }
@@ -53,20 +53,27 @@
         }
         #sunshinesName {
             font-style: italic;
-            color: #d4a373; /* Earthy Yellow */
+            color: #ffcc00; /* Brighter Yellow */
             margin-top: 30px;
             font-size: 1em;
+        }
+        #sunImage {
+            width: 100px;
+            height: auto;
+            margin-top: 20px;
+            background: none; /* Remove checkered background */
         }
     </style>
 </head>
 <body>
     <h1>Welcome to Sunshines.app</h1>
+    <img id="sunImage" src="{{ url_for('static', filename='sun.png') }}" alt="Sun Image">
     <button onclick="createRoom()">Create Room</button>
     <input type="text" id="roomCodeInput" placeholder="Enter Room Code">
     <button onclick="joinRoom()">Join Room</button>
     <div id="errorMessage"></div>
 
-    <div id="sunshinesName">A Project by Sunshines</div>
+    <div id="sunshinesName">A Project by A</div>
 
     <script>
         async function createRoom() {

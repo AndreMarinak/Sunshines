@@ -1,1 +1,1 @@
-web: python Sunshines.py
+web: gunicorn Sunshines:app

@@ -8,21 +8,21 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffffe0; /* Light Yellow */
+            background-color: #fffacd; /* Brighter Light Yellow */
             color: #333; /* Dark Gray */
             text-align: center;
             padding: 50px;
         }
         h1 {
-            color: #d4a373; /* Earthy Yellow */
+            color: #ffcc00; /* Brighter Yellow */
         }
         #roomCodeDisplay {
             font-size: 2em;
-            color: #d4a373; /* Earthy Yellow */
+            color: #ffcc00; /* Brighter Yellow */
             margin-bottom: 20px;
         }
         button {
-            background-color: #f0e68c; /* Khaki */
+            background-color: #ffeb3b; /* Brighter Khaki */
             border: none;
             color: #555; /* Darker Gray */
             padding: 12px 24px;
@@ -36,40 +36,62 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #e0d87a; /* Slightly Darker Khaki */
+            background-color: #ffd700; /* Slightly Darker Brighter Khaki */
         }
         #reviewMessages {
             margin: 20px 0;
             font-size: 6.67em; /* 1.5 times smaller than 10em */
-            border: 2px solid #d4a373; /* Earthy Yellow */
+            border: 2px solid #ffcc00; /* Brighter Yellow */
             padding: 20px;
             border-radius: 10px;
             background-color: #fff8dc; /* Cornsilk */
-            max-height: 300px; /* Set a maximum height */
+            max-height: 600px; /* Increase maximum height */
             overflow-y: auto; /* Enable vertical scrolling */
             word-wrap: break-word; /* Ensure long words break to fit within the box */
+        }
+        #reviewMessages img {
+            max-width: 100%; /* Ensure images fit within the container */
+            height: auto;
         }
         #messageCounter {
             font-size: 1.2em;
             margin-bottom: 20px;
         }
+        #warningMessage {
+            color: red;
+            margin-top: 10px;
+            font-size: 1em;
+        }
+        #imageLink {
+            margin-top: 10px;
+            font-size: 1em;
+        }
         #sunshinesName {
             font-style: italic;
-            color: #d4a373; /* Earthy Yellow */
+            color: #ffcc00; /* Brighter Yellow */
             margin-top: 30px;
+        }
+        #sunImage {
+            width: 100px;
+            height: auto;
+            margin-top: 20px;
+            background: none; /* Remove checkered background */
         }
     </style>
 </head>
 <body>
     <h1>Review Submissions</h1>
+    <img id="sunImage" src="{{ url_for('static', filename='sun.png') }}" alt="Sun Image">
     <div id="roomCodeDisplay">Room Code: {{ room_code }}</div>
     <button onclick="closeSubmissions()">Close Submissions</button>
     <div id="messageCounter"></div>
     <div id="reviewMessages"></div>
     <button onclick="prevMessage()">Previous</button>
     <button onclick="nextMessage()">Next</button>
+    <div id="imageLink"></div>
+    <div id="warningMessage">When you click upload image, please wait a second until it goes away to upload another image/message.</div>
 
-    <div id="sunshinesName">A Project by Sunshines</div>
+    <div id="sunshinesName">A Project by A</div>
 
     <script>
         let currentRoomCode = "{{ room_code }}";
@@ -100,12 +122,25 @@
         function showReviewMessage() {
             let reviewMessagesDiv = document.getElementById("reviewMessages");
             let messageCounterDiv = document.getElementById("messageCounter");
+            let imageLinkDiv = document.getElementById("imageLink");
             reviewMessagesDiv.innerHTML = "";
+            imageLinkDiv.innerHTML = "";
             if (messages.length > 0) {
                 let p = document.createElement("p");
-                p.textContent = messages[currentMessageIndex];
+                p.innerHTML = messages[currentMessageIndex]; // Use innerHTML to render HTML tags
                 reviewMessagesDiv.appendChild(p);
                 messageCounterDiv.textContent = `Message ${currentMessageIndex + 1} of ${messages.length}`;
+                reviewMessagesDiv.scrollTop = 0; // Reset scroll position to the top
+
+                // Check if the message contains an image and add the link below the buttons
+                if (messages[currentMessageIndex].includes('<img')) {
+                    let imageUrl = messages[currentMessageIndex].match(/src="([^"]+)"/)[1];
+                    let link = document.createElement("a");
+                    link.href = imageUrl;
+                    link.target = "_blank";
+                    link.textContent = imageUrl;
+                    imageLinkDiv.appendChild(link);
+                }
             } else {
                 reviewMessagesDiv.textContent = "No messages to review.";
                 messageCounterDiv.textContent = "";

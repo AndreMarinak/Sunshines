@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Message</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffffe0; /* Light Yellow */
+            background-color: #fffacd; /* Brighter Light Yellow */
             color: #333; /* Dark Gray */
             text-align: center;
             padding: 20px;
             margin: 0;
         }
         h1 {
-            color: #d4a373; /* Earthy Yellow */
+            color: #ffcc00; /* Brighter Yellow */
             font-size: 2em;
         }
         #messageBox {
@@ -26,12 +27,17 @@
             width: 100%;
             padding: 12px;
             margin: 15px 0;
-            border: 2px solid #f0e68c; /* Khaki */
+            border: 2px solid #ffeb3b; /* Brighter Khaki */
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px; /* Smaller font size */
+            word-wrap: break-word; /* Ensure long words break to fit within the box */
+            overflow: hidden; /* Hide overflow content */
+        }
+        input[type="file"] {
+            margin: 15px 0;
         }
         button {
-            background-color: #f0e68c; /* Khaki */
+            background-color: #ffeb3b; /* Brighter Khaki */
             border: none;
             color: #555; /* Darker Gray */
             padding: 10px 20px;
@@ -45,61 +51,93 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #e0d87a; /* Slightly Darker Khaki */
+            background-color: #ffd700; /* Slightly Darker Brighter Khaki */
+        }
+        #warningMessage {
+            color: red;
+            margin-top: 10px;
+            font-size: 1em;
         }
         #sunshinesName {
             font-style: italic;
-            color: #d4a373; /* Earthy Yellow */
+            color: #ffcc00; /* Brighter Yellow */
             margin-top: 30px;
             font-size: 1em;
+        }
+        #sunImage {
+            width: 100px;
+            height: auto;
+            margin-top: 20px;
+            background: none; /* Remove checkered background */
         }
     </style>
 </head>
 <body>
     <h1>Submit Your Message</h1>
+    <img id="sunImage" src="{{ url_for('static', filename='sun.png') }}" alt="Sun Image">
     <div id="messageBox">
         <textarea id="messageInput" placeholder="Type your message..." oninput="adjustFontSize()"></textarea>
+        <input type="file" id="imageInput" accept="image/*">
         <button onclick="sendMessage()">Submit</button>
     </div>
+    <div id="warningMessage">When you click upload image, please wait a second until it goes away to upload another image/message.</div>
 
-    <div id="sunshinesName">A Project by Sunshines</div>
+    <div id="sunshinesName">A Project by A</div>
 
     <script>
         const roomCode = "{{ room_code }}";
 
         async function sendMessage() {
             let message = document.getElementById("messageInput").value;
-            let response = await fetch('/send-message', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ room_code: roomCode, message: message })
-            });
-            let data = await response.json();
-            if (data.status === "success") {
-                document.getElementById("messageInput").value = "";
-            } else if (data.status === "closed") {
-                window.location.href = '/';
-            } else {
-                alert(data.message);
+            let image = document.getElementById("imageInput").files[0];
+            if (message) {
+                let response = await fetch('/send-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ room_code: roomCode, message: message })
+                });
+                let data = await response.json();
+                if (data.status === "success") {
+                    document.getElementById("messageInput").value = "";
+                } else if (data.status === "closed") {
+                    window.location.href = '/';
+                } else {
+                    alert(data.message);
+                }
+            }
+            if (image) {
+                let formData = new FormData();
+                formData.append("room_code", roomCode);
+                formData.append("image", image);
+                let response = await fetch('/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                let data = await response.json();
+                if (data.status === "success") {
+                    document.getElementById("imageInput").value = "";
+                } else {
+                    alert(data.message);
+                }
             }
         }
 
         function adjustFontSize() {
             const textarea = document.getElementById("messageInput");
             const length = textarea.value.length;
-            let fontSize = 16; // Default font size
+            let fontSize = 14; // Default font size
 
             if (length > 100) {
-                fontSize = 14;
-            }
-            if (length > 200) {
                 fontSize = 12;
             }
-            if (length > 300) {
+            if (length > 200) {
                 fontSize = 10;
             }
-            if (length > 400) {
+            if (length > 300) {
                 fontSize = 8;
+            }
+            if (length > 400) {
+                fontSize = 6;
             }
 
             textarea.style.fontSize = fontSize + "px";
